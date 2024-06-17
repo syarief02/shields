@@ -9,6 +9,22 @@ on:
 jobs:
   daily-tests:
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: ci_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -18,14 +34,22 @@ jobs:
         with:
           node-version: 20
 
-      #- name: Run main tests
-      #  run: npm run coverage:test
-      #  env:
-      #    mocha_reporter: mocha-junit-reporter
-      #    MOCHA_FILE: junit/main/results.xml
+      - name: Migrate DB
+        run: npm run migrate up
+        env:
+          POSTGRES_URL: postgresql://postgres:postgres@localhost:5432/ci_test
+
+      - name: Run main tests
+        run: npm run coverage:test
+        env:
+          mocha_reporter: mocha-junit-reporter
+          MOCHA_FILE: junit/main/results.xml
+          GH_TOKEN: '${{ secrets.GH_PAT }}'
+          POSTGRES_URL: postgresql://postgres:postgres@localhost:5432/ci_test
 
       - name: Run service tests
         run: npm run coverage:test:services
+        if: always()
         env:
           RETRY_COUNT: 3
           GH_TOKEN: '${{ secrets.GH_PAT }}'
