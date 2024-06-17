@@ -39,11 +39,29 @@ jobs:
         env:
           POSTGRES_URL: postgresql://postgres:postgres@localhost:5432/ci_test
 
-      - name: Run main tests
-        run: npm run coverage:test
+      - name: Run core tests
+        run: npm run coverage:test:core
         env:
           mocha_reporter: mocha-junit-reporter
-          MOCHA_FILE: junit/main/results.xml
+          MOCHA_FILE: junit/core/results.xml
+
+      - name: Run package tests
+        run: npm run coverage:test:package
+        env:
+          mocha_reporter: mocha-junit-reporter
+          MOCHA_FILE: junit/package/results.xml
+
+      - name: Run entrypoint tests
+        run: npm run coverage:test:entrypoint
+        env:
+          mocha_reporter: mocha-junit-reporter
+          MOCHA_FILE: junit/entrypoint/results.xml
+
+      - name: Run integration tests
+        run: npm run coverage:test:integration
+        env:
+          mocha_reporter: mocha-junit-reporter
+          MOCHA_FILE: junit/integration/results.xml
           GH_TOKEN: '${{ secrets.GH_PAT }}'
           POSTGRES_URL: postgresql://postgres:postgres@localhost:5432/ci_test
 
