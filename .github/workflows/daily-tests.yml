@@ -41,24 +41,28 @@ jobs:
 
       - name: Run core tests
         run: npm run coverage:test:core
+        if: always()
         env:
           mocha_reporter: mocha-junit-reporter
           MOCHA_FILE: junit/core/results.xml
 
       - name: Run package tests
         run: npm run coverage:test:package
+        if: always()
         env:
           mocha_reporter: mocha-junit-reporter
           MOCHA_FILE: junit/package/results.xml
 
       - name: Run entrypoint tests
         run: npm run coverage:test:entrypoint
+        if: always()
         env:
           mocha_reporter: mocha-junit-reporter
           MOCHA_FILE: junit/entrypoint/results.xml
 
       - name: Run integration tests
         run: npm run coverage:test:integration
+        if: always()
         env:
           mocha_reporter: mocha-junit-reporter
           MOCHA_FILE: junit/integration/results.xml
