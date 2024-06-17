@@ -16,9 +16,7 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
         with:
-          node-version: 22
-        env:
-          NPM_CONFIG_ENGINE_STRICT: 'false'
+          node-version: 20
 
       #- name: Run main tests
       #  run: npm run coverage:test
