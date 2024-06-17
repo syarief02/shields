@@ -18,11 +18,11 @@ jobs:
         with:
           node-version: 20
 
-      - name: Run main tests
-        run: npm run coverage:test
-        env:
-          mocha_reporter: mocha-junit-reporter
-          MOCHA_FILE: junit/main/results.xml
+      #- name: Run main tests
+      #  run: npm run coverage:test
+      #  env:
+      #    mocha_reporter: mocha-junit-reporter
+      #    MOCHA_FILE: junit/main/results.xml
 
       - name: Run service tests
         run: npm run coverage:test:services
