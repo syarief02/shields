@@ -1,0 +1,47 @@
+name: Run Daily Service Tests
+on:
+  schedule:
+    - cron: '45 3 * * *'
+    # At 03:45, daily
+  workflow_dispatch:
+
+jobs:
+  daily-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          node-version: 20
+
+      - name: Run main tests
+        run: npm run coverage:test
+        env:
+          mocha_reporter: mocha-junit-reporter
+          MOCHA_FILE: junit/main/results.xml
+
+      - name: Run service tests
+        run: npm run coverage:test:services
+        env:
+          RETRY_COUNT: 3
+          GH_TOKEN: '${{ secrets.GH_PAT }}'
+          LIBRARIESIO_TOKENS: '${{ secrets.SERVICETESTS_LIBRARIESIO_TOKENS }}'
+          OBS_USER: '${{ secrets.SERVICETESTS_OBS_USER }}'
+          OBS_PASS: '${{ secrets.SERVICETESTS_OBS_PASS }}'
+          PEPY_KEY: '${{ secrets.SERVICETESTS_PEPY_KEY }}'
+          SL_INSIGHT_USER_UUID: '${{ secrets.SERVICETESTS_SL_INSIGHT_USER_UUID }}'
+          SL_INSIGHT_API_TOKEN: '${{ secrets.SERVICETESTS_SL_INSIGHT_API_TOKEN }}'
+          TWITCH_CLIENT_ID: '${{ secrets.SERVICETESTS_TWITCH_CLIENT_ID }}'
+          TWITCH_CLIENT_SECRET: '${{ secrets.SERVICETESTS_TWITCH_CLIENT_SECRET }}'
+          WHEELMAP_TOKEN: '${{ secrets.SERVICETESTS_WHEELMAP_TOKEN }}'
+          YOUTUBE_API_KEY: '${{ secrets.SERVICETESTS_YOUTUBE_API_KEY }}'
+          mocha_reporter: mocha-junit-reporter
+          MOCHA_FILE: junit/services/results.xml
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          path: junit/**/*
