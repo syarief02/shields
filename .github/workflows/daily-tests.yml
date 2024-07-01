@@ -48,18 +48,19 @@ jobs:
         with:
           github-token: '${{ secrets.GH_PAT }}'
 
-      - name: Service tests (triggered from local branch)
+      - name: Run service tests
+        run: npm run test:services
         if: always()
-        uses: ./.github/actions/service-tests
-        with:
-          github-token: '${{ secrets.GH_PAT }}'
-          librariesio-tokens: '${{ secrets.SERVICETESTS_LIBRARIESIO_TOKENS }}'
-          obs-user: '${{ secrets.SERVICETESTS_OBS_USER }}'
-          obs-pass: '${{ secrets.SERVICETESTS_OBS_PASS }}'
-          pepy-key: '${{ secrets.SERVICETESTS_PEPY_KEY }}'
-          sl-insight-user-uuid: '${{ secrets.SERVICETESTS_SL_INSIGHT_USER_UUID }}'
-          sl-insight-api-token: '${{ secrets.SERVICETESTS_SL_INSIGHT_API_TOKEN }}'
-          twitch-client-id: '${{ secrets.SERVICETESTS_TWITCH_CLIENT_ID }}'
-          twitch-client-secret: '${{ secrets.SERVICETESTS_TWITCH_CLIENT_SECRET }}'
-          wheelmap-token: '${{ secrets.SERVICETESTS_WHEELMAP_TOKEN }}'
-          youtube-api-key: '${{ secrets.SERVICETESTS_YOUTUBE_API_KEY }}'
+        env:
+          RETRY_COUNT: 3
+          GH_TOKEN: '${{ secrets.GH_PAT }}'
+          LIBRARIESIO_TOKENS: '${{ secrets.SERVICETESTS_LIBRARIESIO_TOKENS }}'
+          OBS_USER: '${{ secrets.SERVICETESTS_OBS_USER }}'
+          OBS_PASS: '${{ secrets.SERVICETESTS_OBS_PASS }}'
+          PEPY_KEY: '${{ secrets.SERVICETESTS_PEPY_KEY }}'
+          SL_INSIGHT_USER_UUID: '${{ secrets.SERVICETESTS_SL_INSIGHT_USER_UUID }}'
+          SL_INSIGHT_API_TOKEN: '${{ secrets.SERVICETESTS_SL_INSIGHT_API_TOKEN }}'
+          TWITCH_CLIENT_ID: '${{ secrets.SERVICETESTS_TWITCH_CLIENT_ID }}'
+          TWITCH_CLIENT_SECRET: '${{ secrets.SERVICETESTS_TWITCH_CLIENT_SECRET }}'
+          WHEELMAP_TOKEN: '${{ secrets.SERVICETESTS_WHEELMAP_TOKEN }}'
+          YOUTUBE_API_KEY: '${{ secrets.SERVICETESTS_YOUTUBE_API_KEY }}'
