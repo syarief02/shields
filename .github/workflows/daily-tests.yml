@@ -48,7 +48,7 @@ jobs:
         with:
           github-token: '${{ secrets.GH_PAT }}'
 
-      - name: Run service tests
+      - name: Run Service tests
         run: npm run test:services
         if: always()
         env:
@@ -64,3 +64,10 @@ jobs:
           TWITCH_CLIENT_SECRET: '${{ secrets.SERVICETESTS_TWITCH_CLIENT_SECRET }}'
           WHEELMAP_TOKEN: '${{ secrets.SERVICETESTS_WHEELMAP_TOKEN }}'
           YOUTUBE_API_KEY: '${{ secrets.SERVICETESTS_YOUTUBE_API_KEY }}'
+
+      - name: Write Service Tests Markdown Summary
+        if: always()
+        run: |
+          echo '# Services' >> $GITHUB_STEP_SUMMARY
+          sed -e 's/^/- /' pull-request-services.log >> $GITHUB_STEP_SUMMARY
+          node scripts/mocha2md.js Report reports/service-tests.json >> $GITHUB_STEP_SUMMARY
