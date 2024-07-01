@@ -1,0 +1,64 @@
+name: Run Daily Service Tests
+on:
+  schedule:
+    - cron: '45 3 * * *'
+    # At 03:45, daily
+  workflow_dispatch:
+
+jobs:
+  daily-tests:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: ci_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          node-version: 20
+
+      - name: Core tests
+        if: always()
+        uses: ./.github/actions/core-tests
+
+      - name: Package tests
+        if: always()
+        uses: ./.github/actions/package-tests
+
+      - name: Integration Tests (with PAT)
+        if: always()
+        uses: ./.github/actions/integration-tests
+        with:
+          github-token: '${{ secrets.GH_PAT }}'
+
+      - name: Service tests (triggered from local branch)
+        if: always()
+        uses: ./.github/actions/service-tests
+        with:
+          github-token: '${{ secrets.GH_PAT }}'
+          librariesio-tokens: '${{ secrets.SERVICETESTS_LIBRARIESIO_TOKENS }}'
+          obs-user: '${{ secrets.SERVICETESTS_OBS_USER }}'
+          obs-pass: '${{ secrets.SERVICETESTS_OBS_PASS }}'
+          pepy-key: '${{ secrets.SERVICETESTS_PEPY_KEY }}'
+          sl-insight-user-uuid: '${{ secrets.SERVICETESTS_SL_INSIGHT_USER_UUID }}'
+          sl-insight-api-token: '${{ secrets.SERVICETESTS_SL_INSIGHT_API_TOKEN }}'
+          twitch-client-id: '${{ secrets.SERVICETESTS_TWITCH_CLIENT_ID }}'
+          twitch-client-secret: '${{ secrets.SERVICETESTS_TWITCH_CLIENT_SECRET }}'
+          wheelmap-token: '${{ secrets.SERVICETESTS_WHEELMAP_TOKEN }}'
+          youtube-api-key: '${{ secrets.SERVICETESTS_YOUTUBE_API_KEY }}'
