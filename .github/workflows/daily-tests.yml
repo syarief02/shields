@@ -4,6 +4,7 @@ on:
     - cron: '45 3 * * *'
     # At 03:45, daily
   workflow_dispatch:
+  push:
 
 jobs:
   daily-tests:
