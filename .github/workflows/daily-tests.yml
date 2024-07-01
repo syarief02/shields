@@ -1,4 +1,4 @@
-name: Run Daily Service Tests
+name: Run Daily Tests
 on:
   schedule:
     - cron: '45 3 * * *'
